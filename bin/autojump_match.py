@@ -4,17 +4,7 @@ import os
 import re
 from difflib import SequenceMatcher
 
-from autojump_utils import is_python3
 from autojump_utils import last
-
-
-if is_python3():  # pragma: no cover
-    ifilter = filter
-    imap = map
-    os.getcwdu = os.getcwd
-else:
-    from itertools import ifilter
-    from itertools import imap
 
 
 def match_anywhere(needles, haystack, ignore_case=False):
@@ -36,14 +26,14 @@ def match_anywhere(needles, haystack, ignore_case=False):
             (path='/foo/baz', weight=10),
         ]
     """
-    regex_needle = '.*' + '.*'.join(imap(re.escape, needles)) + '.*'
+    regex_needle = '.*' + '.*'.join(map(re.escape, needles)) + '.*'
     regex_flags = re.IGNORECASE | re.UNICODE if ignore_case else re.UNICODE
     found = lambda haystack: re.search(
         regex_needle,
         haystack.path,
         flags=regex_flags,
     )
-    return ifilter(found, haystack)
+    return filter(found, haystack)
 
 
 def match_consecutive(needles, haystack, ignore_case=False):
@@ -78,14 +68,14 @@ def match_consecutive(needles, haystack, ignore_case=False):
     regex_no_sep = '[^' + os.sep + ']*'
     regex_no_sep_end = regex_no_sep + '$'
     regex_one_sep = regex_no_sep + os.sep + regex_no_sep
-    regex_needle = regex_one_sep.join(imap(re.escape, needles)) + regex_no_sep_end
+    regex_needle = regex_one_sep.join(map(re.escape, needles)) + regex_no_sep_end
     regex_flags = re.IGNORECASE | re.UNICODE if ignore_case else re.UNICODE
     found = lambda entry: re.search(
         regex_needle,
         entry.path,
         flags=regex_flags,
     )
-    return ifilter(found, haystack)
+    return filter(found, haystack)
 
 
 def match_fuzzy(needles, haystack, ignore_case=False, threshold=0.6):
@@ -126,4 +116,4 @@ def match_fuzzy(needles, haystack, ignore_case=False, threshold=0.6):
             b=end_dir(entry.path),
         ).ratio()
     meets_threshold = lambda entry: match_percent(entry) >= threshold
-    return ifilter(meets_threshold, haystack)
+    return filter(meets_threshold, haystack)

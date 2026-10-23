@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import os
 import platform
 import shutil
 import sys
-
-sys.path.append('bin')
-from autojump_argparse import ArgumentParser  # noqa
+from argparse import ArgumentParser
 
 SUPPORTED_SHELLS = ('bash', 'zsh', 'fish', 'tcsh')
 
@@ -55,6 +51,9 @@ def modify_autojump_lua(clink_dir, bin_dir, dryrun=False):
 
 
 def parse_arguments():  # noqa
+    if sys.version_info < (3, 15):
+        sys.exit('Python v3.15+ required.')
+
     if platform.system() == 'Windows':
         default_user_destdir = os.path.join(
             os.getenv('LOCALAPPDATA', ''),
@@ -74,7 +73,7 @@ def parse_arguments():  # noqa
 
     parser = ArgumentParser(
         description='Installs autojump globally for root users, otherwise \
-            installs in current user\'s home directory.'
+            installs in current user\'s home directory.',
     )
     parser.add_argument(
         '-n', '--dryrun', action='store_true', default=False,
@@ -82,7 +81,7 @@ def parse_arguments():  # noqa
     )
     parser.add_argument(
         '-f', '--force', action='store_true', default=False,
-        help='skip root user, shell type, Python version checks',
+        help='skip root user and shell type checks',
     )
     parser.add_argument(
         '-d', '--destdir', metavar='DIR', default=default_user_destdir,
@@ -108,9 +107,6 @@ def parse_arguments():  # noqa
     args = parser.parse_args()
 
     if not args.force:
-        if sys.version_info[0] == 2 and sys.version_info[1] < 6:
-            print('Python v2.6+ or v3.0+ required.', file=sys.stderr)
-            sys.exit(1)
         if args.system:
             if platform.system() == 'Windows':
                 print(
@@ -198,7 +194,6 @@ def main(args):
     mkdir(share_dir, args.dryrun)
 
     cp('./bin/autojump', bin_dir, args.dryrun)
-    cp('./bin/autojump_argparse.py', bin_dir, args.dryrun)
     cp('./bin/autojump_data.py', bin_dir, args.dryrun)
     cp('./bin/autojump_match.py', bin_dir, args.dryrun)
     cp('./bin/autojump_utils.py', bin_dir, args.dryrun)

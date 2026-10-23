@@ -61,7 +61,7 @@ INSTALLATION
 
 ### REQUIREMENTS
 
--   Python v2.6+ or Python v3.3+
+-   Python v3.15+
 -   Supported shells
     -   bash - first class support
     -   zsh - first class support

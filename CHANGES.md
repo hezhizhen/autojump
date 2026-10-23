@@ -1,6 +1,11 @@
 ## Summary of release changes, see commit history for more details:
 ## https://github.com/wting/autojump/commits/master/
 
+### Unreleased:
+- require Python v3.15+; Python 2 and older Python 3 versions are no longer supported
+- use the standard library argparse module; version output now goes to stdout,
+  and help and error formatting follows the installed Python version
+
 ### Release v22.4.0:
 - minor zsh performance improvement
 

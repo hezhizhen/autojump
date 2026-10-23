@@ -1,11 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os
-import sys
-
 import pytest
-
-sys.path.append(os.path.join(os.getcwd(), 'bin'))  # noqa
 from autojump_data import Entry
 from autojump_match import match_anywhere
 from autojump_match import match_consecutive
@@ -19,8 +14,8 @@ class TestMatchAnywhere(object):
     entry4 = Entry('/中/zhong/国/guo', 10)
     entry5 = Entry('/is\'t/this/a/b*tchin/edge/case?', 10)
     win_entry1 = Entry('C:\\foo\\bar\\baz', 10)
-    win_entry2 = Entry('D:\Program Files (x86)\GIMP', 10)
-    win_entry3 = Entry('C:\Windows\System32', 10)
+    win_entry2 = Entry(r'D:\Program Files (x86)\GIMP', 10)
+    win_entry3 = Entry(r'C:\Windows\System32', 10)
 
     @pytest.fixture
     def haystack(self):
@@ -75,9 +70,9 @@ class TestMatchConsecutive(object):
     entry4 = Entry('/中/zhong/国/guo', 10)
     entry5 = Entry('/日/本', 10)
     entry6 = Entry('/is\'t/this/a/b*tchin/edge/case?', 10)
-    win_entry1 = Entry('C:\Foo\Bar\Baz', 10)
-    win_entry2 = Entry('D:\Program Files (x86)\GIMP', 10)
-    win_entry3 = Entry('C:\Windows\System32', 10)
+    win_entry1 = Entry(r'C:\Foo\Bar\Baz', 10)
+    win_entry2 = Entry(r'D:\Program Files (x86)\GIMP', 10)
+    win_entry3 = Entry(r'C:\Windows\System32', 10)
 
     @pytest.fixture
     def haystack(self):
