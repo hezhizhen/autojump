@@ -2,7 +2,7 @@
 
 ### REQUIREMENTS
 
-- Python v3.15+
+- Python v3.15+ as `python3` on `PATH` (`python` on Windows)
 - Supported shells
     - bash  - first class support
     - zsh - first class support
