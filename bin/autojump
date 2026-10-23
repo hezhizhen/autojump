@@ -45,7 +45,7 @@ from autojump_utils import print_tab_menu
 from autojump_utils import sanitize
 from autojump_utils import take
 # autojump is not a standard python package but rather installed as a mixed
-# shell + Python app with no outside dependencies (except Python). As a
+# fish + Python app with no outside dependencies (except Python). As a
 # consequence we use relative imports and depend on file prefixes to prevent
 # module conflicts.
 
@@ -247,8 +247,8 @@ def print_stats(data, data_path):
 
 def main(args):  # noqa
     if not is_autojump_sourced():
-        print("Please source the correct autojump file in your shell's")
-        print('startup file. For more information, please reinstall autojump')
+        print('Please source autojump.fish in your fish startup file.')
+        print('For more information, please reinstall autojump')
         print('and read the post installation instructions.')
         return 1
 

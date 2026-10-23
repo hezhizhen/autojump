@@ -42,10 +42,6 @@ def parse_arguments():
         '-p', '--prefix', metavar='DIR', default='',
         help='custom prefix',
     )
-    parser.add_argument(
-        '-z', '--zshshare', metavar='DIR', default='functions',
-        help='custom zshshare',
-    )
 
     return parser.parse_args()
 
@@ -56,9 +52,7 @@ def remove_custom_installation(args, dryrun=False):
 
     bin_dir = os.path.join(args.destdir, args.prefix, 'bin')
     doc_dir = os.path.join(args.destdir, args.prefix, 'share', 'man', 'man1')
-    etc_dir = os.path.join(args.destdir, 'etc', 'profile.d')
     share_dir = os.path.join(args.destdir, args.prefix, 'share', 'autojump')
-    zshshare_dir = os.path.join(args.destdir, args.zshshare)
 
     if not os.path.exists(share_dir):
         return
@@ -69,12 +63,7 @@ def remove_custom_installation(args, dryrun=False):
     rm(os.path.join(bin_dir, 'autojump_match.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_utils.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_argparse.py'), dryrun)
-    rm(os.path.join(etc_dir, 'autojump.sh'), dryrun)
-    rm(os.path.join(share_dir, 'autojump.bash'), dryrun)
     rm(os.path.join(share_dir, 'autojump.fish'), dryrun)
-    rm(os.path.join(share_dir, 'autojump.tcsh'), dryrun)
-    rm(os.path.join(share_dir, 'autojump.zsh'), dryrun)
-    rm(os.path.join(zshshare_dir, '_j'), dryrun)
     rmdir(share_dir, dryrun)
     rm(os.path.join(doc_dir, 'autojump.1'), dryrun)
 
@@ -85,7 +74,6 @@ def remove_custom_installation(args, dryrun=False):
 def remove_system_installation(dryrun=False):
     default_destdir = '/'
     default_prefix = '/usr/local'
-    default_zshshare = '/usr/local/share/zsh/site-functions'
 
     bin_dir = os.path.join(default_destdir, default_prefix, 'bin')
     doc_dir = os.path.join(
@@ -95,14 +83,12 @@ def remove_system_installation(dryrun=False):
         'man',
         'man1',
     )
-    etc_dir = os.path.join(default_destdir, 'etc', 'profile.d')
     share_dir = os.path.join(
         default_destdir,
         default_prefix,
         'share',
         'autojump',
     )
-    zshshare_dir = os.path.join(default_destdir, default_zshshare)
 
     if not os.path.exists(share_dir):
         return
@@ -121,12 +107,7 @@ def remove_system_installation(dryrun=False):
     rm(os.path.join(bin_dir, 'autojump_match.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_utils.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_argparse.py'), dryrun)
-    rm(os.path.join(etc_dir, 'autojump.sh'), dryrun)
-    rm(os.path.join(share_dir, 'autojump.bash'), dryrun)
     rm(os.path.join(share_dir, 'autojump.fish'), dryrun)
-    rm(os.path.join(share_dir, 'autojump.tcsh'), dryrun)
-    rm(os.path.join(share_dir, 'autojump.zsh'), dryrun)
-    rm(os.path.join(zshshare_dir, '_j'), dryrun)
     rmdir(share_dir, dryrun)
     rm(os.path.join(doc_dir, 'autojump.1'), dryrun)
 

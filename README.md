@@ -6,7 +6,7 @@ autojump - a faster way to navigate your filesystem
 DESCRIPTION
 -----------
 
-autojump is a faster way to navigate your filesystem. It works by
+autojump is a faster way to navigate your filesystem in fish. It works by
 maintaining a database of the directories you use the most from the
 command line.
 
@@ -60,11 +60,7 @@ INSTALLATION
 ### REQUIREMENTS
 
 -   Python v3.15+ as `python3` on `PATH`
--   Supported shells
-    -   bash - first class support
-    -   zsh - first class support
-    -   fish - community supported
-    -   tcsh - community supported
+-   fish
 -   Supported platforms
     -   macOS
 -   Supported installation methods
@@ -106,15 +102,6 @@ KNOWN ISSUES
 ------------
 
 -   autojump does not support directories that begin with `-`.
-
--   For bash users, autojump keeps track of directories by modifying
-    `$PROMPT_COMMAND`. Do not overwrite `$PROMPT_COMMAND`:
-
-        export PROMPT_COMMAND="history -a"
-
-    Instead append to the end of the existing \$PROMPT\_COMMAND:
-
-        export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
 
 REPORTING BUGS
 --------------

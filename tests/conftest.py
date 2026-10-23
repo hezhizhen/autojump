@@ -20,7 +20,7 @@ def cli(tmpdir):
     env.update({
         'HOME': home,
         'AUTOJUMP_SOURCED': '1',
-        'SHELL': '/bin/zsh',
+        'SHELL': 'fish',
         'PYTHON_COLORS': '0',
         'PYTHONIOENCODING': 'utf-8',
         'PYTHONDONTWRITEBYTECODE': '1',

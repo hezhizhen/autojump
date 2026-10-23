@@ -7,7 +7,7 @@
 autojump \- a faster way to navigate your filesystem
 .SS DESCRIPTION
 .PP
-autojump is a faster way to navigate your filesystem.
+autojump is a faster way to navigate your filesystem in fish.
 It works by maintaining a database of the directories you use the most
 from the command line.
 .PP
@@ -92,26 +92,6 @@ autojump\ \-\-help
 .SS KNOWN ISSUES
 .IP \[bu] 2
 autojump does not support directories that begin with \f[C]\-\f[].
-.IP \[bu] 2
-For bash users, autojump keeps track of directories by modifying
-\f[C]$PROMPT_COMMAND\f[].
-Do not overwrite \f[C]$PROMPT_COMMAND\f[]:
-.RS 2
-.IP
-.nf
-\f[C]
-export\ PROMPT_COMMAND="history\ \-a"
-\f[]
-.fi
-.PP
-Instead append to the end of the existing $PROMPT_COMMAND:
-.IP
-.nf
-\f[C]
-export\ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND\ ;}\ history\ \-a"
-\f[]
-.fi
-.RE
 .SS REPORTING BUGS
 .PP
 For any questions or issues please visit:

@@ -2,7 +2,6 @@
 import os
 import runpy
 import sys
-from shlex import quote
 from types import SimpleNamespace
 
 import pytest
@@ -15,7 +14,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 @pytest.fixture
 def installer(monkeypatch):
-    monkeypatch.setenv('SHELL', '/bin/zsh')
+    monkeypatch.setenv('SHELL', 'fish')
     monkeypatch.setenv(
         'PATH', os.path.dirname(sys.executable) + os.pathsep + os.environ.get('PATH', ''),
     )
@@ -39,6 +38,28 @@ def test_reject_unsupported_python(monkeypatch, version, script):
 def test_accept_python315(installer, monkeypatch):
     monkeypatch.setattr(installer, 'sys', SimpleNamespace(version_info=(3, 15), platform='darwin'))
     assert installer.parse_arguments().dryrun
+
+
+@pytest.mark.parametrize('shell', ['/usr/local/bin/fish', '/opt/homebrew/bin/fish', 'fish'])
+def test_accept_fish(installer, monkeypatch, shell):
+    monkeypatch.setenv('SHELL', shell)
+    assert installer.parse_arguments().dryrun
+
+
+@pytest.mark.parametrize('shell', ['other-shell', ''])
+def test_reject_unsupported_shell(installer, monkeypatch, capsys, shell):
+    monkeypatch.setenv('SHELL', shell)
+    with pytest.raises(SystemExit) as error:
+        installer.parse_arguments()
+    assert error.value.code == 1
+    assert 'Unsupported shell:' in capsys.readouterr().err
+
+
+def test_force_install_for_fish_with_other_login_shell(installer, monkeypatch, capsys):
+    monkeypatch.setenv('SHELL', 'other-shell')
+    monkeypatch.setattr(sys, 'argv', ['install.py', '--dryrun', '--force'])
+    installer.main(installer.parse_arguments())
+    assert '~/.config/fish/config.fish' in capsys.readouterr().out
 
 
 @pytest.mark.parametrize('platform', ['linux', 'freebsd', 'win32'])
@@ -67,8 +88,7 @@ def test_install_rejects_bad_launcher(cli, tmpdir, version, force):
     path = tmpdir.mkdir('interpreter path')
     if version is not None:
         launcher = path.join('python3')
-        probe = 'import sys; sys.version_info = %r; exec(sys.argv[2])' % (version,)
-        launcher.write('#!/bin/sh\nexec %s -c %s "$@"\n' % (quote(sys.executable), quote(probe)))
+        launcher.write('#!%s\nimport sys\nsys.version_info = %r\nexec(sys.argv[2])\n' % (sys.executable, version))
         launcher.chmod(0o755)
     destination = str(tmpdir.join('installation'))
     args = ['--destdir', destination]
@@ -81,15 +101,19 @@ def test_install_rejects_bad_launcher(cli, tmpdir, version, force):
 
 
 @pytest.mark.parametrize('direct', [False, True])
-def test_custom_install_and_legacy_uninstall(installer, tmpdir, monkeypatch, cli, direct):
-    destination = str(tmpdir.join('installation'))
+@pytest.mark.parametrize('prefix', ['', 'local'])
+def test_custom_install_and_legacy_uninstall(installer, tmpdir, monkeypatch, cli, direct, prefix):
+    destination = str(tmpdir.join('installation path'))
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr(
-        sys, 'argv', ['install.py', '--destdir', destination],
+        sys, 'argv', ['install.py', '--destdir', destination, '--prefix', prefix],
     )
     args = installer.parse_arguments()
     installer.main(args)
-    bin_dir = os.path.join(destination, 'bin')
+    bin_dir = os.path.join(destination, prefix, 'bin')
+    share_dir = os.path.join(destination, prefix, 'share', 'autojump')
+    assert sorted(os.listdir(destination)) == (['bin', 'share'] if not prefix else [prefix])
+    assert sorted(os.listdir(share_dir)) == ['autojump.fish', 'icon.png']
     assert not os.path.exists(os.path.join(bin_dir, 'autojump_argparse.py'))
     result = cli('--version', script=os.path.join(bin_dir, 'autojump'), direct=direct)
     assert result.returncode == 0
@@ -100,6 +124,14 @@ def test_custom_install_and_legacy_uninstall(installer, tmpdir, monkeypatch, cli
 
     uninstall.remove_custom_installation(args)
     assert not os.path.exists(destination)
+
+
+def test_custom_dry_run_does_not_create_files(cli, tmp_path):
+    destination = tmp_path / 'installation'
+    result = cli('--dryrun', '--destdir', str(destination), script='install.py', cwd=ROOT)
+    assert result.returncode == 0
+    assert 'autojump.fish' in result.stdout
+    assert not destination.exists()
 
 
 def test_remove_user_data_uses_macos_directory(tmp_path, monkeypatch):
