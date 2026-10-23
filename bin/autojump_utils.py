@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import errno
 import os
-import platform
 import re
 import shutil
 import sys
@@ -67,14 +66,6 @@ def in_bash():
 
 def is_autojump_sourced():
     return '1' == os.getenv('AUTOJUMP_SOURCED')
-
-
-def is_linux():
-    return platform.system() == 'Linux'
-
-
-def is_osx():
-    return platform.system() == 'Darwin'
 
 
 def last(xs):

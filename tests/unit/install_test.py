@@ -37,8 +37,21 @@ def test_reject_unsupported_python(monkeypatch, version, script):
 
 
 def test_accept_python315(installer, monkeypatch):
-    monkeypatch.setattr(installer, 'sys', SimpleNamespace(version_info=(3, 15)))
+    monkeypatch.setattr(installer, 'sys', SimpleNamespace(version_info=(3, 15), platform='darwin'))
     assert installer.parse_arguments().dryrun
+
+
+@pytest.mark.parametrize('platform', ['linux', 'freebsd', 'win32'])
+@pytest.mark.parametrize('script', ['bin/autojump', 'install.py', 'uninstall.py'])
+def test_reject_unsupported_platform(monkeypatch, platform, script):
+    parse_arguments = runpy.run_path(os.path.join(ROOT, script))['parse_arguments']
+    monkeypatch.setitem(
+        parse_arguments.__globals__, 'sys', SimpleNamespace(
+            version_info=(3, 15), platform=platform, exit=sys.exit,
+        ),
+    )
+    with pytest.raises(SystemExit, match=r'macOS required\.'):
+        parse_arguments()
 
 
 @pytest.mark.parametrize('script', ['install.py', 'uninstall.py'])
@@ -87,3 +100,19 @@ def test_custom_install_and_legacy_uninstall(installer, tmpdir, monkeypatch, cli
 
     uninstall.remove_custom_installation(args)
     assert not os.path.exists(destination)
+
+
+def test_remove_user_data_uses_macos_directory(tmp_path, monkeypatch):
+    home = tmp_path / 'home'
+    data = home / 'Library' / 'autojump'
+    data.mkdir(parents=True)
+    xdg_data = tmp_path / 'xdg-data'
+    xdg_data.mkdir()
+    (xdg_data / 'unrelated.txt').write_text('keep me')
+    monkeypatch.setenv('HOME', str(home))
+    monkeypatch.setenv('XDG_DATA_HOME', str(xdg_data))
+
+    uninstall.remove_user_data()
+
+    assert not data.exists()
+    assert (xdg_data / 'unrelated.txt').read_text() == 'keep me'

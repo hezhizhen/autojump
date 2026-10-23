@@ -19,7 +19,6 @@ def cli(tmpdir):
     env = os.environ.copy()
     env.update({
         'HOME': home,
-        'XDG_DATA_HOME': os.path.join(home, '.local', 'share'),
         'AUTOJUMP_SOURCED': '1',
         'SHELL': '/bin/zsh',
         'PYTHON_COLORS': '0',
@@ -48,9 +47,7 @@ def cli(tmpdir):
             stderr.decode('utf-8'),
         )
 
-    if sys.platform == 'darwin':
-        data_home = os.path.join(home, 'Library')
-    else:
-        data_home = env['XDG_DATA_HOME']
+    data_home = os.path.join(home, 'Library')
     run.data_path = os.path.join(data_home, 'autojump', 'autojump.txt')
+    run.env = env
     return run

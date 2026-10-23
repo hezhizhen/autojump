@@ -8,7 +8,6 @@ from tempfile import NamedTemporaryFile
 from time import time
 
 from autojump_utils import create_dir
-from autojump_utils import is_osx
 from autojump_utils import move_file
 
 
@@ -43,7 +42,7 @@ def load(config):
         'autojump',
     )
 
-    if is_osx() and os.path.exists(xdg_aj_home):
+    if os.path.exists(xdg_aj_home):
         migrate_osx_xdg_data(config)
 
     if not os.path.exists(config['data_path']):
@@ -82,11 +81,9 @@ def load_backup(config):
 
 def migrate_osx_xdg_data(config):
     """
-    Older versions incorrectly used Linux XDG_DATA_HOME paths on OS X. This
+    Older macOS versions stored data in ~/.local/share/autojump. This
     migrates autojump files from ~/.local/share/autojump to ~/Library/autojump
     """
-    assert is_osx(), 'This function should only be run on OS X.'
-
     xdg_data_home = os.path.join(os.path.expanduser('~'), '.local', 'share')
     xdg_aj_home = os.path.join(xdg_data_home, 'autojump')
     data_path = os.path.join(xdg_aj_home, 'autojump.txt')

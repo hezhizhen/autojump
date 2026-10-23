@@ -39,7 +39,6 @@ from autojump_utils import get_pwd
 from autojump_utils import get_tab_entry_info
 from autojump_utils import has_uppercase
 from autojump_utils import is_autojump_sourced
-from autojump_utils import is_osx
 from autojump_utils import last
 from autojump_utils import print_entry
 from autojump_utils import print_tab_menu
@@ -59,17 +58,7 @@ TAB_SEPARATOR = '__'
 def set_defaults():
     config = {}
 
-    if is_osx():
-        data_home = os.path.join(os.path.expanduser('~'), 'Library')
-    else:
-        data_home = os.getenv(
-            'XDG_DATA_HOME',
-            os.path.join(
-                os.path.expanduser('~'),
-                '.local',
-                'share',
-            ),
-        )
+    data_home = os.path.join(os.path.expanduser('~'), 'Library')
     config['data_path'] = os.path.join(data_home, 'autojump', 'autojump.txt')
     config['backup_path'] = os.path.join(data_home, 'autojump', 'autojump.txt.bak')
 
@@ -79,6 +68,9 @@ def set_defaults():
 def parse_arguments():
     if sys.version_info < (3, 15):
         sys.exit('Python v3.15+ required.')
+
+    if sys.platform != 'darwin':
+        sys.exit('macOS required.')
 
     parser = ArgumentParser(
         description='Automatically jump to directory passed as an argument.',

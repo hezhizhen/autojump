@@ -9,13 +9,9 @@
     - fish - community supported
     - tcsh - community supported
 - Supported platforms
-    - Linux - first class support
-    - OS X - first class support
-    - BSD - community supported
+    - macOS
 - Supported installation methods
     - source code - first class support
-    - Debian and derivatives - first class support
-    - ArchLinux / Gentoo / openSUSE / RedHat and derivatives - community supported
     - Homebrew / MacPorts - community supported
 
 Due to limited time and resources, only "first class support" items will be
@@ -39,28 +35,9 @@ Run the installation script and follow on screen instructions.
 
 ### AUTOMATIC
 
-#### Linux
+#### macOS
 
-autojump is included in the following distro repositories, please use relevant
-package management utilities to install (e.g. apt-get, yum, pacman, etc):
-
-- Debian, Ubuntu, Linux Mint
-
-    All Debian-derived distros require manual activation for policy reasons,
-    please see `/usr/share/doc/autojump/README.Debian`.
-
-- RedHat, Fedora, CentOS
-
-    Install `autojump-zsh` for zsh, `autojump-fish` for fish, etc.
-
-- ArchLinux
-- Gentoo
-- Frugalware
-- Slackware
-
-#### OS X
-
-Homebrew is the recommended installation method for Mac OS X:
+Homebrew is the recommended installation method for macOS:
 
     brew install autojump
 

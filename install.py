@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import platform
 import shutil
 import subprocess
 import sys
@@ -56,12 +55,15 @@ def parse_arguments():  # noqa
     if sys.version_info < (3, 15):
         sys.exit('Python v3.15+ required.')
 
+    if sys.platform != 'darwin':
+        sys.exit('macOS required.')
+
     default_user_destdir = os.path.join(os.path.expanduser('~'), '.autojump')
     default_user_prefix = ''
     default_user_zshshare = 'functions'
     default_system_destdir = '/'
     default_system_prefix = '/usr/local'
-    default_system_zshshare = '/usr/share/zsh/site-functions'
+    default_system_zshshare = '/usr/local/share/zsh/site-functions'
 
     parser = ArgumentParser(
         description='Installs autojump globally for root users, otherwise \
@@ -141,7 +143,7 @@ def show_post_installation_message(etc_dir, share_dir):
         aj_shell = '%s/autojump.sh' % etc_dir
         source_msg = '[[ -s %s ]] && source %s' % (aj_shell, aj_shell)
 
-        if platform.system() == 'Darwin' and get_shell() == 'bash':
+        if get_shell() == 'bash':
             rcfile = '~/.profile'
         else:
             rcfile = '~/.%src' % get_shell()

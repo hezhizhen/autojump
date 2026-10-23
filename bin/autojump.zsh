@@ -19,13 +19,7 @@ fi
 
 
 # set error file location
-if [[ "$(uname)" == "Darwin" ]]; then
-    export AUTOJUMP_ERROR_PATH=~/Library/autojump/errors.log
-elif [[ -n "${XDG_DATA_HOME}" ]]; then
-    export AUTOJUMP_ERROR_PATH="${XDG_DATA_HOME}/autojump/errors.log"
-else
-    export AUTOJUMP_ERROR_PATH=~/.local/share/autojump/errors.log
-fi
+export AUTOJUMP_ERROR_PATH=~/Library/autojump/errors.log
 
 if [[ ! -d ${AUTOJUMP_ERROR_PATH:h} ]]; then
     mkdir -p ${AUTOJUMP_ERROR_PATH:h}
@@ -91,17 +85,7 @@ jo() {
     setopt localoptions noautonamedirs
     local output="$(autojump ${@})"
     if [[ -d "${output}" ]]; then
-        case ${OSTYPE} in
-            linux*)
-                xdg-open "${output}"
-                ;;
-            darwin*)
-                open "${output}"
-                ;;
-            *)
-                echo "Unknown operating system: ${OSTYPE}" 1>&2
-                ;;
-        esac
+        open "${output}"
     else
         echo "autojump: directory '${@}' not found"
         echo "\n${output}\n"
