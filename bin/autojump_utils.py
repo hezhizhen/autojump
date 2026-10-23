@@ -60,10 +60,6 @@ def has_uppercase(string):
     return any(ch.isupper() for ch in string)
 
 
-def in_bash():
-    return 'bash' in os.getenv('SHELL')
-
-
 def is_autojump_sourced():
     return '1' == os.getenv('AUTOJUMP_SOURCED')
 
@@ -115,16 +111,6 @@ def second(xs):
     it = iter(xs)
     next(it, None)
     return next(it, None)
-
-
-def surround_quotes(string):
-    """
-    Bash has problems dealing with certain paths so we're surrounding all
-    path outputs with quotes.
-    """
-    if in_bash() and string:
-        return '"{0}"'.format(string)
-    return string
 
 
 def take(n, iterable):

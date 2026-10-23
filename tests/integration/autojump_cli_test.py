@@ -33,10 +33,10 @@ def test_empty_database(cli):
     assert cli('missing').stdout.strip() == '.'
 
 
-def test_requires_shell_initialization(cli):
+def test_requires_fish_initialization(cli):
     result = cli(env={'AUTOJUMP_SOURCED': ''})
     assert result.returncode == 1
-    assert 'Please source the correct autojump file' in result.stdout
+    assert 'Please source autojump.fish' in result.stdout
     assert not os.path.exists(cli.data_path)
 
 

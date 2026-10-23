@@ -3,15 +3,6 @@ KNOWN ISSUES
 
 -   autojump does not support directories that begin with `-`.
 
--   For bash users, autojump keeps track of directories by modifying
-    `$PROMPT_COMMAND`. Do not overwrite `$PROMPT_COMMAND`:
-
-        export PROMPT_COMMAND="history -a"
-
-    Instead append to the end of the existing \$PROMPT\_COMMAND:
-
-        export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
-
 REPORTING BUGS
 --------------
 

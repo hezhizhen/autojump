@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from unittest import mock
-
-import autojump_utils
 from autojump_utils import first
 from autojump_utils import get_tab_entry_info
 from autojump_utils import has_uppercase
-from autojump_utils import in_bash
 from autojump_utils import last
 from autojump_utils import sanitize
 from autojump_utils import second
-from autojump_utils import surround_quotes
 from autojump_utils import take
 
 
@@ -21,16 +16,6 @@ def test_has_uppercase():
     assert not has_uppercase('')
     assert has_uppercase('日本語Ａ')
     assert not has_uppercase('中文路径')
-
-
-@mock.patch.object(autojump_utils, 'in_bash', return_value=True)
-def test_surround_quotes_in_bash(_):
-    assert surround_quotes('foo') == '"foo"'
-
-
-@mock.patch.object(autojump_utils, 'in_bash', return_value=False)
-def test_dont_surround_quotes_not_in_bash(_):
-    assert surround_quotes('foo') == 'foo'
 
 
 def test_sanitize():
@@ -64,17 +49,6 @@ def test_take():
     assert list(take(2, range(3))) == [0, 1]
     assert list(take(4, range(3))) == [0, 1, 2]
     assert list(take(10, [])) == []
-
-
-# environment variables
-def test_in_bash(monkeypatch):
-    for path in ['/bin/bash', '/usr/bin/bash']:
-        monkeypatch.setenv('SHELL', path)
-        assert in_bash()
-
-    for path in ['/bin/zsh', '/usr/bin/zsh']:
-        monkeypatch.setenv('SHELL', path)
-        assert not in_bash()
 
 
 # helper functions

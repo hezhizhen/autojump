@@ -5,8 +5,7 @@ import shutil
 import subprocess
 import sys
 from argparse import ArgumentParser
-
-SUPPORTED_SHELLS = ('bash', 'zsh', 'fish', 'tcsh')
+from shlex import quote
 
 
 def check_launcher_python():
@@ -29,26 +28,10 @@ def cp(src, dest, dryrun=False):
         shutil.copy(src, dest)
 
 
-def get_shell():
-    return os.path.basename(os.getenv('SHELL', ''))
-
-
 def mkdir(path, dryrun=False):
     print('creating directory:', path)
     if not dryrun and not os.path.exists(path):
         os.makedirs(path)
-
-
-def modify_autojump_sh(etc_dir, share_dir, dryrun=False):
-    """Append custom installation path to autojump.sh"""
-    custom_install = '\
-        \n# check custom install \
-        \nif [ -s %s/autojump.${shell} ]; then \
-        \n    source %s/autojump.${shell} \
-        \nfi\n' % (share_dir, share_dir)
-
-    with open(os.path.join(etc_dir, 'autojump.sh'), 'a') as f:
-        f.write(custom_install)
 
 
 def parse_arguments():  # noqa
@@ -60,14 +43,12 @@ def parse_arguments():  # noqa
 
     default_user_destdir = os.path.join(os.path.expanduser('~'), '.autojump')
     default_user_prefix = ''
-    default_user_zshshare = 'functions'
     default_system_destdir = '/'
     default_system_prefix = '/usr/local'
-    default_system_zshshare = '/usr/local/share/zsh/site-functions'
 
     parser = ArgumentParser(
-        description='Installs autojump globally for root users, otherwise \
-            installs in current user\'s home directory.',
+        description='Installs autojump for fish in the current user\'s home \
+            directory, or system-wide with --system.',
     )
     parser.add_argument(
         '-n', '--dryrun', action='store_true', default=False,
@@ -86,10 +67,6 @@ def parse_arguments():  # noqa
         help='set prefix to DIR',
     )
     parser.add_argument(
-        '-z', '--zshshare', metavar='DIR', default=default_user_zshshare,
-        help='set zsh share destination to DIR',
-    )
-    parser.add_argument(
         '-s', '--system', action='store_true', default=False,
         help='install system wide for all users',
     )
@@ -105,22 +82,16 @@ def parse_arguments():  # noqa
                 )
                 sys.exit(1)
 
-        if get_shell() not in SUPPORTED_SHELLS:
+        if os.path.basename(os.getenv('SHELL', '')) != 'fish':
             print(
                 'Unsupported shell: %s' % os.getenv('SHELL'),
                 file=sys.stderr,
             )
             sys.exit(1)
 
-    if args.destdir != default_user_destdir \
-            or args.prefix != default_user_prefix \
-            or args.zshshare != default_user_zshshare:
-        args.custom_install = True
-    else:
-        args.custom_install = False
-
     if args.system:
-        if args.custom_install:
+        if args.destdir != default_user_destdir \
+                or args.prefix != default_user_prefix:
             print(
                 'Custom paths incompatible with --system option.',
                 file=sys.stderr,
@@ -129,29 +100,15 @@ def parse_arguments():  # noqa
 
         args.destdir = default_system_destdir
         args.prefix = default_system_prefix
-        args.zshshare = default_system_zshshare
 
     return args
 
 
-def show_post_installation_message(etc_dir, share_dir):
-    if get_shell() == 'fish':
-        aj_shell = '%s/autojump.fish' % share_dir
-        source_msg = 'if test -f %s; . %s; end' % (aj_shell, aj_shell)
-        rcfile = '~/.config/fish/config.fish'
-    else:
-        aj_shell = '%s/autojump.sh' % etc_dir
-        source_msg = '[[ -s %s ]] && source %s' % (aj_shell, aj_shell)
-
-        if get_shell() == 'bash':
-            rcfile = '~/.profile'
-        else:
-            rcfile = '~/.%src' % get_shell()
-
-    print('\nPlease manually add the following line(s) to %s:' % rcfile)
+def show_post_installation_message(share_dir):
+    aj_shell = quote(os.path.join(share_dir, 'autojump.fish'))
+    source_msg = 'if test -f %s; source %s; end' % (aj_shell, aj_shell)
+    print('\nPlease manually add the following line(s) to ~/.config/fish/config.fish:')
     print('\n\t' + source_msg)
-    if get_shell() == 'zsh':
-        print('\n\tautoload -U compinit && compinit -u')
 
     print('\nPlease restart terminal(s) before running autojump.\n')
 
@@ -165,16 +122,12 @@ def main(args):
         print('Installing autojump to %s ...' % args.destdir)
 
     bin_dir = os.path.join(args.destdir, args.prefix, 'bin')
-    etc_dir = os.path.join(args.destdir, 'etc', 'profile.d')
     doc_dir = os.path.join(args.destdir, args.prefix, 'share', 'man', 'man1')
     share_dir = os.path.join(args.destdir, args.prefix, 'share', 'autojump')
-    zshshare_dir = os.path.join(args.destdir, args.zshshare)
 
     mkdir(bin_dir, args.dryrun)
     mkdir(doc_dir, args.dryrun)
-    mkdir(etc_dir, args.dryrun)
     mkdir(share_dir, args.dryrun)
-    mkdir(zshshare_dir, args.dryrun)
 
     cp('./bin/autojump', bin_dir, args.dryrun)
     cp('./bin/autojump_data.py', bin_dir, args.dryrun)
@@ -183,16 +136,8 @@ def main(args):
     cp('./bin/icon.png', share_dir, args.dryrun)
     cp('./docs/autojump.1', doc_dir, args.dryrun)
 
-    cp('./bin/autojump.sh', etc_dir, args.dryrun)
-    cp('./bin/autojump.bash', share_dir, args.dryrun)
     cp('./bin/autojump.fish', share_dir, args.dryrun)
-    cp('./bin/autojump.zsh', share_dir, args.dryrun)
-    cp('./bin/_j', zshshare_dir, args.dryrun)
-
-    if args.custom_install:
-        modify_autojump_sh(etc_dir, share_dir, args.dryrun)
-
-    show_post_installation_message(etc_dir, share_dir)
+    show_post_installation_message(share_dir)
 
 
 if __name__ == '__main__':

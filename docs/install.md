@@ -3,11 +3,7 @@
 ### REQUIREMENTS
 
 - Python v3.15+ as `python3` on `PATH`
-- Supported shells
-    - bash  - first class support
-    - zsh - first class support
-    - fish - community supported
-    - tcsh - community supported
+- fish
 - Supported platforms
     - macOS
 - Supported installation methods

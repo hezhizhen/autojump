@@ -6,8 +6,8 @@ autojump - a faster way to navigate your filesystem
 DESCRIPTION
 -----------
 
-autojump is a faster way to navigate your filesystem. It works by maintaining a
-database of the directories you use the most from the command line.
+autojump is a faster way to navigate your filesystem in fish. It works by
+maintaining a database of the directories you use the most from the command line.
 
 *Directories must be visited first before they can be jumped to.*
 

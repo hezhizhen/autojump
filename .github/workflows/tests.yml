@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.15'
+      - name: Install fish
+        run: brew install fish
       - name: Install test runner
         run: python -m pip install tox
       - name: Run tests
