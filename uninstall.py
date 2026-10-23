@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import platform
 import shutil
 import sys
 from argparse import ArgumentParser
@@ -20,6 +19,9 @@ def is_empty_dir(path):
 def parse_arguments():
     if sys.version_info < (3, 15):
         sys.exit('Python v3.15+ required.')
+
+    if sys.platform != 'darwin':
+        sys.exit('macOS required.')
 
     parser = ArgumentParser(
         description='Uninstalls autojump.',
@@ -83,7 +85,7 @@ def remove_custom_installation(args, dryrun=False):
 def remove_system_installation(dryrun=False):
     default_destdir = '/'
     default_prefix = '/usr/local'
-    default_zshshare = '/usr/share/zsh/site-functions'
+    default_zshshare = '/usr/local/share/zsh/site-functions'
 
     bin_dir = os.path.join(default_destdir, default_prefix, 'bin')
     doc_dir = os.path.join(
@@ -130,22 +132,7 @@ def remove_system_installation(dryrun=False):
 
 
 def remove_user_data(dryrun=False):
-    if platform.system() == 'Darwin':
-        data_home = os.path.join(
-            os.path.expanduser('~'),
-            'Library',
-            'autojump',
-        )
-    else:
-        data_home = os.getenv(
-            'XDG_DATA_HOME',
-            os.path.join(
-                os.path.expanduser('~'),
-                '.local',
-                'share',
-                'autojump',
-            ),
-        )
+    data_home = os.path.join(os.path.expanduser('~'), 'Library', 'autojump')
 
     if os.path.exists(data_home):
         print('\nFound user data...')

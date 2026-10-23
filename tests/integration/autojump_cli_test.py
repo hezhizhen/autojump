@@ -61,8 +61,10 @@ def test_existing_utf8_database_and_completion(cli, tmpdir):
 
 def test_add_update_and_purge(cli, tmpdir):
     directory = str(tmpdir.mkdir('日本語 project'))
-    assert cli('--add', directory).returncode == 0
+    xdg_data_home = str(tmpdir.join('xdg-data'))
+    assert cli('--add', directory, env={'XDG_DATA_HOME': xdg_data_home}).returncode == 0
     assert cli('日本語').stdout.strip() == directory
+    assert not os.path.exists(xdg_data_home)
     increased = cli('--increase', '5', cwd=directory)
     assert increased.returncode == 0
     assert increased.stdout.strip() == '11.2:\t' + directory

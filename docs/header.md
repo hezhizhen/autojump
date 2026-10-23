@@ -30,8 +30,7 @@ be used with `autojump` can be used with `j` and vice versa.
 
 - Open File Manager To Directories (instead of jumping):
 
-    Instead of jumping to a directory, you can open a file explorer window (Mac
-    Finder, GNOME Nautilus, etc.) to the directory instead.
+    Instead of jumping to a directory, you can open the directory in Finder.
 
         jo music
 
@@ -43,13 +42,13 @@ be used with `autojump` can be used with `j` and vice versa.
 
     Let's assume the following database:
 
-        30   /home/user/mail/inbox
-        10   /home/user/work/inbox
+        30   /Users/user/mail/inbox
+        10   /Users/user/work/inbox
 
-    `j in` would jump into /home/user/mail/inbox as the higher weighted
+    `j in` would jump into /Users/user/mail/inbox as the higher weighted
     entry. However you can pass multiple arguments to autojump to prefer
     a different entry. In the above example, `j w in` would then change
-    directory to /home/user/work/inbox.
+    directory to /Users/user/work/inbox.
 
 For more options refer to help:
 

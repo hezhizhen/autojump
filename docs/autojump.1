@@ -45,9 +45,7 @@ jc\ bar
 Open File Manager To Directories (instead of jumping):
 .RS 2
 .PP
-Instead of jumping to a directory, you can open a file explorer window
-(Mac Finder, GNOME Nautilus, etc.) to the directory
-instead.
+Instead of jumping to a directory, you can open the directory in Finder.
 .IP
 .nf
 \f[C]
@@ -71,17 +69,17 @@ Let\[aq]s assume the following database:
 .IP
 .nf
 \f[C]
-30\ \ \ /home/user/mail/inbox
-10\ \ \ /home/user/work/inbox
+30\ \ \ /Users/user/mail/inbox
+10\ \ \ /Users/user/work/inbox
 \f[]
 .fi
 .PP
-\f[C]j\ in\f[] would jump into /home/user/mail/inbox as the higher
+\f[C]j\ in\f[] would jump into /Users/user/mail/inbox as the higher
 weighted entry.
 However you can pass multiple arguments to autojump to prefer a
 different entry.
 In the above example, \f[C]j\ w\ in\f[] would then change directory to
-/home/user/work/inbox.
+/Users/user/work/inbox.
 .RE
 .PP
 For more options refer to help:

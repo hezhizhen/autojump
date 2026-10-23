@@ -30,9 +30,7 @@ can be used with `autojump` can be used with `j` and vice versa.
 
 -   Open File Manager To Directories (instead of jumping):
 
-    Instead of jumping to a directory, you can open a file explorer
-    window (Mac Finder, GNOME Nautilus, etc.) to the
-    directory instead.
+    Instead of jumping to a directory, you can open the directory in Finder.
 
         jo music
 
@@ -44,13 +42,13 @@ can be used with `autojump` can be used with `j` and vice versa.
 
     Let's assume the following database:
 
-        30   /home/user/mail/inbox
-        10   /home/user/work/inbox
+        30   /Users/user/mail/inbox
+        10   /Users/user/work/inbox
 
-    `j in` would jump into /home/user/mail/inbox as the higher
+    `j in` would jump into /Users/user/mail/inbox as the higher
     weighted entry. However you can pass multiple arguments to autojump
     to prefer a different entry. In the above example, `j w in` would
-    then change directory to /home/user/work/inbox.
+    then change directory to /Users/user/work/inbox.
 
 For more options refer to help:
 
@@ -68,14 +66,9 @@ INSTALLATION
     -   fish - community supported
     -   tcsh - community supported
 -   Supported platforms
-    -   Linux - first class support
-    -   OS X - first class support
-    -   BSD - community supported
+    -   macOS
 -   Supported installation methods
     -   source code - first class support
-    -   Debian and derivatives - first class support
-    -   ArchLinux / Gentoo / openSUSE / RedHat and derivatives -
-        community supported
     -   Homebrew / MacPorts - community supported
 
 Due to limited time and resources, only "first class support" items will
@@ -99,29 +92,9 @@ Run the installation script and follow on screen instructions.
 
 ### AUTOMATIC
 
-#### Linux
+#### macOS
 
-autojump is included in the following distro repositories, please use
-relevant package management utilities to install (e.g. apt-get, yum,
-pacman, etc):
-
--   Debian, Ubuntu, Linux Mint
-
-    All Debian-derived distros require manual activation for policy
-    reasons, please see `/usr/share/doc/autojump/README.Debian`.
-
--   RedHat, Fedora, CentOS
-
-    Install `autojump-zsh` for zsh, `autojump-fish` for fish, etc.
-
--   ArchLinux
--   Gentoo
--   Frugalware
--   Slackware
-
-#### OS X
-
-Homebrew is the recommended installation method for Mac OS X:
+Homebrew is the recommended installation method for macOS:
 
     brew install autojump
 

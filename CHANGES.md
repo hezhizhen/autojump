@@ -2,6 +2,7 @@
 ## https://github.com/wting/autojump/commits/master/
 
 ### Unreleased:
+- support macOS only; remove Linux data paths, desktop openers, and CI configuration
 - remove Windows and Cygwin support, including Clink integration and batch launchers
 - require Python v3.15+; Python 2 and older Python 3 versions are no longer supported
 - check the interpreter used by installed launchers before writing installation files

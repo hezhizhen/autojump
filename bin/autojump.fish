@@ -5,24 +5,12 @@ if test -d ~/.autojump
     set -x PATH ~/.autojump/bin $PATH
 end
 
-# Set ostype, if not set
-if not set -q OSTYPE
-    set -gx OSTYPE (bash -c 'echo ${OSTYPE}')
-end
-
-
 # enable tab completion
 complete -x -c j -a '(autojump --complete (commandline -t))'
 
 
 # set error file location
-if test (uname) = "Darwin"
-    set -gx AUTOJUMP_ERROR_PATH ~/Library/autojump/errors.log
-else if test -d "$XDG_DATA_HOME"
-    set -gx AUTOJUMP_ERROR_PATH $XDG_DATA_HOME/autojump/errors.log
-else
-    set -gx AUTOJUMP_ERROR_PATH ~/.local/share/autojump/errors.log
-end
+set -gx AUTOJUMP_ERROR_PATH ~/Library/autojump/errors.log
 
 if test ! -d (dirname $AUTOJUMP_ERROR_PATH)
     mkdir -p (dirname $AUTOJUMP_ERROR_PATH)
@@ -83,14 +71,7 @@ end
 function jo
     set -l output (autojump $argv)
     if test -d "$output"
-        switch $OSTYPE
-            case 'linux*'
-                xdg-open (autojump $argv)
-            case 'darwin*'
-                open (autojump $argv)
-            case '*'
-                __aj_err "Unknown operating system: \"$OSTYPE\""
-        end
+        open "$output"
     else
         __aj_err "autojump: directory '"$argv"' not found"
         __aj_err "\n$output\n"
