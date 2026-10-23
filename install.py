@@ -3,10 +3,26 @@
 import os
 import platform
 import shutil
+import subprocess
 import sys
 from argparse import ArgumentParser
 
 SUPPORTED_SHELLS = ('bash', 'zsh', 'fish', 'tcsh')
+
+
+def check_launcher_python():
+    command = 'python' if platform.system() == 'Windows' else 'python3'
+    interpreter = shutil.which(command)
+    try:
+        if interpreter and subprocess.call(
+            [interpreter, '-c', 'import sys; sys.exit(sys.version_info < (3, 15))'],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ) == 0:
+            return
+    except OSError:
+        pass
+    sys.exit('Python v3.15+ required for %s on PATH.' % command)
 
 
 def cp(src, dest, dryrun=False):
@@ -177,6 +193,8 @@ def show_post_installation_message(etc_dir, share_dir, bin_dir):
 
 
 def main(args):
+    check_launcher_python()
+
     if args.dryrun:
         print('Installing autojump to %s (DRYRUN)...' % args.destdir)
     else:

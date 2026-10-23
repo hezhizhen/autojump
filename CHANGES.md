@@ -3,6 +3,7 @@
 
 ### Unreleased:
 - require Python v3.15+; Python 2 and older Python 3 versions are no longer supported
+- check the interpreter used by installed launchers before writing installation files
 - use the standard library argparse module; version output now goes to stdout,
   and help and error formatting follows the installed Python version
 

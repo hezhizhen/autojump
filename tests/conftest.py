@@ -32,10 +32,15 @@ def cli(tmpdir):
 
     def run(*args, **kwargs):
         script = kwargs.pop('script', os.path.join('bin', 'autojump'))
+        command = [os.path.join(ROOT, script)] + list(args)
+        if not kwargs.pop('direct', False):
+            command.insert(0, sys.executable)
+        process_env = env.copy()
+        process_env.update(kwargs.pop('env', {}))
         process = subprocess.Popen(
-            [sys.executable, os.path.join(ROOT, script)] + list(args),
+            command,
             cwd=kwargs.pop('cwd', str(tmpdir)),
-            env=env,
+            env=process_env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
