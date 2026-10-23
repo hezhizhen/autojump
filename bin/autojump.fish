@@ -88,8 +88,6 @@ function jo
                 xdg-open (autojump $argv)
             case 'darwin*'
                 open (autojump $argv)
-            case cygwin
-                cygstart "" (cygpath -w -a (pwd))
             case '*'
                 __aj_err "Unknown operating system: \"$OSTYPE\""
         end

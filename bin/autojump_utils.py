@@ -77,10 +77,6 @@ def is_osx():
     return platform.system() == 'Darwin'
 
 
-def is_windows():
-    return platform.system() == 'Windows'
-
-
 def last(xs):
     tmp = None
     for tmp in xs:
@@ -89,15 +85,7 @@ def last(xs):
 
 
 def move_file(src, dst):
-    """
-    Atomically move file.
-
-    Windows does not allow for atomic file renaming (which is used by
-    os.rename / shutil.move) so destination paths must first be deleted.
-    """
-    if is_windows() and os.path.exists(dst):
-        # raises exception if file is in use on Windows
-        os.remove(dst)
+    """Move a file, replacing an existing destination file."""
     shutil.move(src, dst)
 
 

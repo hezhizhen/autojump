@@ -31,7 +31,7 @@ be used with `autojump` can be used with `j` and vice versa.
 - Open File Manager To Directories (instead of jumping):
 
     Instead of jumping to a directory, you can open a file explorer window (Mac
-    Finder, Windows Explorer, GNOME Nautilus, etc.) to the directory instead.
+    Finder, GNOME Nautilus, etc.) to the directory instead.
 
         jo music
 

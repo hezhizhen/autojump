@@ -31,7 +31,7 @@ can be used with `autojump` can be used with `j` and vice versa.
 -   Open File Manager To Directories (instead of jumping):
 
     Instead of jumping to a directory, you can open a file explorer
-    window (Mac Finder, Windows Explorer, GNOME Nautilus, etc.) to the
+    window (Mac Finder, GNOME Nautilus, etc.) to the
     directory instead.
 
         jo music
@@ -61,17 +61,15 @@ INSTALLATION
 
 ### REQUIREMENTS
 
--   Python v3.15+ as `python3` on `PATH` (`python` on Windows)
+-   Python v3.15+ as `python3` on `PATH`
 -   Supported shells
     -   bash - first class support
     -   zsh - first class support
     -   fish - community supported
     -   tcsh - community supported
-    -   clink - community supported
 -   Supported platforms
     -   Linux - first class support
     -   OS X - first class support
-    -   Windows - community supported
     -   BSD - community supported
 -   Supported installation methods
     -   source code - first class support
@@ -130,12 +128,6 @@ Homebrew is the recommended installation method for Mac OS X:
 MacPorts is also available:
 
     port install autojump
-
-Windows
--------
-
-Windows support is enabled by [clink](https://mridgers.github.io/clink/)
-which should be installed prior to installing autojump.
 
 KNOWN ISSUES
 ------------

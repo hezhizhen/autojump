@@ -33,6 +33,13 @@ def test_empty_database(cli):
     assert cli('missing').stdout.strip() == '.'
 
 
+def test_requires_shell_initialization(cli):
+    result = cli(env={'AUTOJUMP_SOURCED': ''})
+    assert result.returncode == 1
+    assert 'Please source the correct autojump file' in result.stdout
+    assert not os.path.exists(cli.data_path)
+
+
 def test_existing_utf8_database_and_completion(cli, tmpdir):
     directory = str(tmpdir.mkdir('中文 Projects'))
     os.makedirs(os.path.dirname(cli.data_path))
