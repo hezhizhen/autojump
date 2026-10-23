@@ -18,30 +18,14 @@
   along with this program; if not, write to the Free Software Foundation, Inc.,
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 """
-from __future__ import print_function
-
 import os
 import sys
+from argparse import ArgumentParser
 from itertools import chain
 from math import sqrt
 from operator import attrgetter
 from operator import itemgetter
 
-if sys.version_info[0] == 3:
-    ifilter = filter
-    imap = map
-    os.getcwdu = os.getcwd
-else:
-    from itertools import ifilter
-    from itertools import imap
-
-# Vendorized argparse for Python 2.6 support
-from autojump_argparse import ArgumentParser
-
-# autojump is not a standard python package but rather installed as a mixed
-# shell + Python app with no outside dependencies (except Python). As a
-# consequence we use relative imports and depend on file prefixes to prevent
-# module conflicts.
 from autojump_data import dictify
 from autojump_data import entriefy
 from autojump_data import Entry
@@ -59,11 +43,13 @@ from autojump_utils import is_osx
 from autojump_utils import is_windows
 from autojump_utils import last
 from autojump_utils import print_entry
-from autojump_utils import print_local
 from autojump_utils import print_tab_menu
 from autojump_utils import sanitize
 from autojump_utils import take
-from autojump_utils import unico
+# autojump is not a standard python package but rather installed as a mixed
+# shell + Python app with no outside dependencies (except Python). As a
+# consequence we use relative imports and depend on file prefixes to prevent
+# module conflicts.
 
 VERSION = '22.5.3'
 FUZZY_MATCH_THRESHOLD = 0.6
@@ -94,6 +80,9 @@ def set_defaults():
 
 
 def parse_arguments():
+    if sys.version_info < (3, 15):
+        sys.exit('Python v3.15+ required.')
+
     parser = ArgumentParser(
         description='Automatically jump to directory passed as an argument.',
         epilog='Please see autojump(1) man pages for full documentation.',
@@ -129,8 +118,8 @@ def parse_arguments():
         help='show database entries and their key weights',
     )
     parser.add_argument(
-        '-v', '--version', action='version', version='%(prog)s v' +
-        VERSION, help='show version information',
+        '-v', '--version', action='version',
+        version='%(prog)s v' + VERSION, help='show version information',
     )
 
     return parser.parse_args()
@@ -144,7 +133,7 @@ def add_path(data, path, weight=10):
     with resulting duplicate entries in the database than a single canonical
     path.
     """
-    path = unico(path).rstrip(os.sep)
+    path = path.rstrip(os.sep)
     if path == os.path.expanduser('~'):
         return data, Entry(path, 0)
 
@@ -155,7 +144,7 @@ def add_path(data, path, weight=10):
 
 def decrease_path(data, path, weight=15):
     """Decrease or zero out a path."""
-    path = unico(path).rstrip(os.sep)
+    path = path.rstrip(os.sep)
     data[path] = max(0, data.get(path, 0) - weight)
     return data, Entry(path, data[path])
 
@@ -165,7 +154,7 @@ def detect_smartcase(needles):
     If any needles contain an uppercase letter then use case sensitive
     searching. Otherwise use case insensitive searching.
     """
-    return not any(imap(has_uppercase, needles))
+    return not any(map(has_uppercase, needles))
 
 
 def find_matches(entries, needles, check_entries=True):
@@ -175,7 +164,7 @@ def find_matches(entries, needles, check_entries=True):
     ignore_case = detect_smartcase(needles)
 
     try:
-        pwd = os.getcwdu()
+        pwd = os.getcwd()
     except OSError:
         pwd = None
 
@@ -194,7 +183,7 @@ def find_matches(entries, needles, check_entries=True):
         reverse=True,
     )
 
-    return ifilter(
+    return filter(
         lambda entry: not is_cwd(entry) and path_exists(entry),
         chain(
             match_consecutive(needles, data, ignore_case),
@@ -208,10 +197,10 @@ def handle_tab_completion(needle, entries):
     tab_needle, tab_index, tab_path = get_tab_entry_info(needle, TAB_SEPARATOR)
 
     if tab_path:
-        print_local(tab_path)
+        print(tab_path)
     elif tab_index:
         get_ith_path = lambda i, iterable: last(take(i, iterable)).path
-        print_local(get_ith_path(
+        print(get_ith_path(
             tab_index,
             find_matches(entries, [tab_needle], check_entries=False),
         ))
@@ -245,7 +234,7 @@ def handle_tab_completion(needle, entries):
 def purge_missing_paths(entries):
     """Remove non-existent paths from a list of entries."""
     exists = lambda entry: os.path.exists(entry.path)
-    return ifilter(exists, entries)
+    return filter(exists, entries)
 
 
 def print_stats(data, data_path):
@@ -257,8 +246,8 @@ def print_stats(data, data_path):
     print('%d:\t number of entries' % len(data))
 
     try:
-        print_local(
-            '%.2f:\t current directory weight' % data.get(os.getcwdu(), 0),
+        print(
+            '%.2f:\t current directory weight' % data.get(os.getcwd(), 0),
         )
     except OSError:
         # current directory no longer exists
@@ -302,8 +291,8 @@ def main(args):  # noqa
     elif not args.directory:
         # Return best match.
         entries = entriefy(load(config))
-        print_local(first(chain(
-            imap(attrgetter('path'), find_matches(entries, [''])),
+        print(first(chain(
+            map(attrgetter('path'), find_matches(entries, [''])),
             # always return a path to calling shell functions
             ['.'],
         )))
@@ -319,18 +308,18 @@ def main(args):  # noqa
             tab_index = 1
 
         if tab_path:
-            print_local(tab_path)
+            print(tab_path)
         elif tab_index:
             get_ith_path = lambda i, iterable: last(take(i, iterable)).path
-            print_local(
+            print(
                 get_ith_path(
                     tab_index,
                     find_matches(entries, [tab_needle]),
                 ),
             )
         else:
-            print_local(first(chain(
-                imap(attrgetter('path'), find_matches(entries, needles)),
+            print(first(chain(
+                map(attrgetter('path'), find_matches(entries, needles)),
                 # always return a path to calling shell functions
                 ['.'],
             )))

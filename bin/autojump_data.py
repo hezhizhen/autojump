@@ -1,28 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import os
 import shutil
 import sys
-from codecs import open
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
 from time import time
 
 from autojump_utils import create_dir
 from autojump_utils import is_osx
-from autojump_utils import is_python3
 from autojump_utils import move_file
-from autojump_utils import unico
-
-
-if sys.version_info[0] == 3:
-    ifilter = filter
-    imap = map
-else:
-    from itertools import ifilter  # noqa
-    from itertools import imap  # noqa
 
 
 BACKUP_THRESHOLD = 24 * 60 * 60
@@ -44,9 +31,7 @@ def dictify(entries):
 def entriefy(data):
     """Converts a dictionary into an iterator of entries."""
     convert = lambda tup: Entry(*tup)
-    if is_python3():
-        return map(convert, data.items())
-    return imap(convert, data.iteritems())
+    return map(convert, data.items())
 
 
 def load(config):
@@ -64,24 +49,24 @@ def load(config):
     if not os.path.exists(config['data_path']):
         return {}
 
-    # example: u'10.0\t/home/user\n' -> ['10.0', u'/home/user']
+    # example: '10.0\t/home/user\n' -> ['10.0', '/home/user']
     parse = lambda line: line.strip().split('\t')
 
     correct_length = lambda x: len(x) == 2
 
-    # example: ['10.0', u'/home/user'] -> (u'/home/user', 10.0)
+    # example: ['10.0', '/home/user'] -> ('/home/user', 10.0)
     tupleize = lambda x: (x[1], float(x[0]))
 
     try:
         with open(
                 config['data_path'],
                 'r', encoding='utf-8',
-                errors='replace',
+                errors='replace', newline='',
         ) as f:
             return dict(
-                imap(
+                map(
                     tupleize,
-                    ifilter(correct_length, imap(parse, f)),
+                    filter(correct_length, map(parse, f)),
                 ),
             )
     except (IOError, EOFError):
@@ -129,9 +114,9 @@ def save(config, data):
         # Windows cannot reuse the same open file name
         temp.close()
 
-        with open(temp.name, 'w', encoding='utf-8', errors='replace') as f:
+        with open(temp.name, 'w', encoding='utf-8', errors='replace', newline='') as f:
             for path, weight in data.items():
-                f.write(unico('%s\t%s\n' % (weight, path)))
+                f.write('%s\t%s\n' % (weight, path))
 
             f.flush()
             os.fsync(f)

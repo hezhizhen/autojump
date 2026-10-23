@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import os
 import platform
 import shutil
 import sys
-
-sys.path.append('bin')
-from autojump_argparse import ArgumentParser  # noqa
+from argparse import ArgumentParser
 
 
 def is_empty_dir(path):
@@ -22,6 +18,9 @@ def is_empty_dir(path):
 
 
 def parse_arguments():
+    if sys.version_info < (3, 15):
+        sys.exit('Python v3.15+ required.')
+
     default_clink_dir = os.path.join(os.getenv('LOCALAPPDATA', ''), 'clink')
 
     parser = ArgumentParser(
@@ -70,6 +69,7 @@ def remove_custom_installation(args, dryrun=False):
     print('\nFound custom installation...')
     rm(os.path.join(bin_dir, 'autojump'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_data.py'), dryrun)
+    rm(os.path.join(bin_dir, 'autojump_match.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_utils.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_argparse.py'), dryrun)
     if platform.system() == 'Windows':
@@ -130,7 +130,9 @@ def remove_system_installation(dryrun=False):
 
     rm(os.path.join(bin_dir, 'autojump'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_data.py'), dryrun)
+    rm(os.path.join(bin_dir, 'autojump_match.py'), dryrun)
     rm(os.path.join(bin_dir, 'autojump_utils.py'), dryrun)
+    rm(os.path.join(bin_dir, 'autojump_argparse.py'), dryrun)
     rm(os.path.join(etc_dir, 'autojump.sh'), dryrun)
     rm(os.path.join(share_dir, 'autojump.bash'), dryrun)
     rm(os.path.join(share_dir, 'autojump.fish'), dryrun)
