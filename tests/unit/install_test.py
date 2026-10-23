@@ -122,7 +122,10 @@ def test_custom_install_and_legacy_uninstall(installer, tmpdir, monkeypatch, cli
     with open(os.path.join(bin_dir, 'autojump_argparse.py'), 'w') as legacy:
         legacy.write('# old installation\n')
 
-    uninstall.remove_custom_installation(args)
+    monkeypatch.setattr(
+        sys, 'argv', ['uninstall.py', '--destdir', destination, '--prefix', prefix],
+    )
+    uninstall.remove_custom_installation(uninstall.parse_arguments())
     assert not os.path.exists(destination)
 
 
