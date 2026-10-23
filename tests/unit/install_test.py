@@ -48,7 +48,6 @@ def test_default_dry_run(cli, script):
     assert 'DRYRUN' in result.stdout
 
 
-@pytest.mark.skipif(os.name == 'nt', reason='POSIX launcher lookup')
 @pytest.mark.parametrize('force', [False, True])
 @pytest.mark.parametrize('version', [None, (3, 14)])
 def test_install_rejects_bad_launcher(cli, tmpdir, version, force):
@@ -68,20 +67,12 @@ def test_install_rejects_bad_launcher(cli, tmpdir, version, force):
     assert not os.path.exists(destination)
 
 
-@pytest.mark.parametrize(
-    'direct', [
-        False,
-        pytest.param(True, marks=pytest.mark.skipif(os.name == 'nt', reason='POSIX shebang execution')),
-    ],
-)
+@pytest.mark.parametrize('direct', [False, True])
 def test_custom_install_and_legacy_uninstall(installer, tmpdir, monkeypatch, cli, direct):
     destination = str(tmpdir.join('installation'))
-    clink_dir = str(tmpdir.mkdir('clink'))
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr(
-        sys, 'argv', [
-            'install.py', '--destdir', destination, '--clinkdir', clink_dir,
-        ],
+        sys, 'argv', ['install.py', '--destdir', destination],
     )
     args = installer.parse_arguments()
     installer.main(args)

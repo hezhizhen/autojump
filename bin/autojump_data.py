@@ -111,7 +111,6 @@ def save(config, data):
     # atomically save by writing to temporary file and moving to destination
     try:
         temp = NamedTemporaryFile(delete=False, dir=data_dir)
-        # Windows cannot reuse the same open file name
         temp.close()
 
         with open(temp.name, 'w', encoding='utf-8', errors='replace', newline='') as f:

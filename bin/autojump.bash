@@ -103,9 +103,6 @@ jo() {
             darwin*)
                 open "${output}"
                 ;;
-            cygwin)
-                cygstart "" $(cygpath -w -a ${output})
-                ;;
             *)
                 echo "Unknown operating system: ${OSTYPE}." 1>&2
                 ;;

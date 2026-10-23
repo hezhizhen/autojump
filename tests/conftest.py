@@ -19,9 +19,6 @@ def cli(tmpdir):
     env = os.environ.copy()
     env.update({
         'HOME': home,
-        'USERPROFILE': home,
-        'APPDATA': home,
-        'LOCALAPPDATA': home,
         'XDG_DATA_HOME': os.path.join(home, '.local', 'share'),
         'AUTOJUMP_SOURCED': '1',
         'SHELL': '/bin/zsh',
@@ -53,8 +50,6 @@ def cli(tmpdir):
 
     if sys.platform == 'darwin':
         data_home = os.path.join(home, 'Library')
-    elif sys.platform == 'win32':
-        data_home = home
     else:
         data_home = env['XDG_DATA_HOME']
     run.data_path = os.path.join(data_home, 'autojump', 'autojump.txt')

@@ -24,7 +24,6 @@ repos:
     language_version: python3
   - id: end-of-file-fixer
     language_version: python3
-    exclude_types: [batch, lua]
   - id: fix-encoding-pragma
     language_version: python3
   - id: flake8
