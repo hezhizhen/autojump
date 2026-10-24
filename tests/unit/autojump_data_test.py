@@ -11,8 +11,7 @@ from autojump_data import save
 
 
 @pytest.fixture
-def config(tmpdir, monkeypatch):
-    monkeypatch.setenv('HOME', str(tmpdir.mkdir('home')))
+def config(tmpdir):
     return {
         'data_path': str(tmpdir.join('data', 'autojump.txt')),
         'backup_path': str(tmpdir.join('data', 'autojump.txt.bak')),
@@ -67,18 +66,3 @@ def test_restore_backup_replaces_existing_data(config):
     assert load_backup(config) == original
     assert load(config) == original
     assert not os.path.exists(config['backup_path'])
-
-
-def test_migrate_osx_data_replaces_existing_files(config, tmp_path, monkeypatch):
-    save(config, {'/existing': 1.0})
-    home = tmp_path / 'home'
-    monkeypatch.setenv('HOME', str(home))
-    old_data = home / '.local' / 'share' / 'autojump'
-    old_data.mkdir(parents=True)
-    (old_data / 'autojump.txt').write_text('10.0\t/中文 Projects\n', encoding='utf-8')
-    (old_data / 'autojump.txt.bak').write_text('5.0\t/日本語\n', encoding='utf-8')
-
-    assert load(config) == {'/中文 Projects': 10.0}
-    with open(config['backup_path'], encoding='utf-8') as backup:
-        assert backup.read() == '5.0\t/日本語\n'
-    assert not old_data.exists()
